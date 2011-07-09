@@ -31,7 +31,7 @@ class Frontend extends ApiFrontend {
 
 		$m=$this->add('Menu',null,'Menu');
 		$m->addMenuItem('Back','index');
-
+        $this->dbConnect();
         $this->initLayout();
 	}
     function page_index($page){
