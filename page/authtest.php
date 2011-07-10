@@ -4,6 +4,7 @@ class page_authtest extends Page {
         parent::init();
 
         // If you want to use whitelist-based auth check, call check() from Frontend.php, init() method
+        $this->api->add('BasicAuth')->allow('admin','admin');
         $this->api->auth->check();
 
         $this->add('HtmlElement')
