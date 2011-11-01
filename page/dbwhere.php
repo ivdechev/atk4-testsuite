@@ -86,6 +86,9 @@ class page_dbwhere extends Page_Tester {
                 ,array(2,4)
                 );
     }
+    function test_where5_4($t){
+        return $t->where('a=b');
+    }
     function test_where6($t){
         return $t->where('id',$t->dsql()->table('foo')->field('name')->where('id',1));
     }

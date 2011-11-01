@@ -6,6 +6,8 @@ class MyObject extends AbstractObject {
 class MyController extends AbstractObject {
     public $x=1;
 }
+class Exception_Logic_Ouch extends Exception_Logic {
+}
 
 class page_core extends Page_Tester {
     function prepare(){
@@ -76,6 +78,25 @@ class page_core extends Page_Tester {
         }
         return false;
     }
+    function test_exception2($t){
+        try{
+            throw $t->exception('test','Logic');
+        }catch(Exception_Logic $e){
+            return true;
+        }
+        return false;
+    }
+    function test_exception3($t){
+
+        try{
+            $t->default_exception='Exception_Logic';
+            throw $t->exception('test','_Ouch');
+        }catch(Exception_Logic_Ouch $e){
+            return true;
+        }
+        return false;
+    }
+
 
     function myfunc($t,$br=false){
         if($br)$t->breakHook(65);
