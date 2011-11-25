@@ -2,6 +2,86 @@
 
 class page_db3 extends Page_Tester {
     public $db;
+    public $proper_responses=array(
+        "Test_render1"=>array (
+  0 => 'hello world',
+  1 => 
+  array (
+  ),
+),
+        "Test_render2"=>array (
+  0 => 'hello `user`',
+  1 => 
+  array (
+  ),
+),
+        "Test_expr"=>array (
+  0 => 'hello world',
+  1 => 
+  array (
+  ),
+),
+        "Test_recursive_render"=>array (
+  0 => 'hello 1+1',
+  1 => 
+  array (
+  ),
+),
+        "Test_render3"=>array (
+  0 => 'hello [some_unknown_tag]',
+  1 => 
+  array (
+  ),
+),
+        "Test_field1"=>array (
+  0 => 'select `name`',
+  1 => 
+  array (
+  ),
+),
+        "Test_field2"=>array (
+  0 => 'select `name`,`surname`',
+  1 => 
+  array (
+  ),
+),
+        "Test_field3"=>array (
+  0 => 'select `name`,`surname`',
+  1 => 
+  array (
+  ),
+),
+        "Test_field3a"=>array (
+  0 => 'select `name`.`user`,`postcode`.`address`',
+  1 => 
+  array (
+  ),
+),
+        "Test_field4"=>array (
+  0 => 'select `name`.`address` `address_name`,`postcode`.`address`,`name`.`user`,`surname`.`user`',
+  1 => 
+  array (
+  ),
+),
+        "Test_field5"=>array (
+  0 => 'select len(name) `name_length`',
+  1 => 
+  array (
+  ),
+),
+        "Test_field6"=>array (
+  0 => 'Exception: Specified expression without alias',
+  1 => 
+  array (
+  ),
+),
+        "Test_field_subquery1"=>array (
+  0 => 'select (select [options] sum(pages) `pages` from `book` [join] [where] [group] [having] [order] [limit]) `total_pages`',
+  1 => 
+  array (
+  ),
+)
+    );
     function init(){
         $this->db=$this->add('DB');
         $this->add('View_Info')->set('Testing basic rendering functionality');
