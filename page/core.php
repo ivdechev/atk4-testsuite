@@ -10,6 +10,29 @@ class Exception_Logic_Ouch extends Exception_Logic {
 }
 
 class page_core extends Page_Tester {
+    public $proper_responses=array(
+        "Test_empty"=>'1',
+        "Test_clone"=>'1',
+        "Test_destroy"=>'1',
+        "Test_getElement"=>'1',
+        "Test_getElement2"=>'1',
+        "Test_hasElement"=>'1',
+        "Test_hasElement2"=>'1',
+        "Test_add"=>'1',
+        "Test_add2_controller"=>'',
+        "Test_session"=>'1',
+        "Test_session2"=>'1',
+        "Test_session3"=>'1',
+        "Test_exception"=>'1',
+        "Test_exception2"=>'1',
+        "Test_exception3"=>'1',
+        "Test_hook1"=>'',
+        "Test_hook2"=>'1',
+        "Test_hook3"=>'1',
+        "Test_addMethod"=>'',
+        "Test_addGlobalMethod"=>'1'
+    );
+
     function prepare(){
         return array($this->add('MyObject'));
     }
@@ -21,9 +44,9 @@ class page_core extends Page_Tester {
         return $t2->x;
     }
     function test_destroy($t){
-        $s=serialize($t);
+        $s=serialize($t->elements);
         $t->add('MyObject')->destroy();
-        $s2=serialize($t);
+        $s2=serialize($t->elements);
         return $s==$s2;
     }
     function test_getElement($t){
@@ -102,7 +125,7 @@ class page_core extends Page_Tester {
         if($br)$t->breakHook(65);
         return 42;
     }
-    function myfunc2($t){
+    function myfunc2($x,$t){
         return 44+$t->x;
     }
     function test_hook1($t){

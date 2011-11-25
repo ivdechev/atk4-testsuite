@@ -2,12 +2,80 @@
 
 class page_db extends Page_Tester {
     public $db;
+    public $proper_responses=array(
+        "Test_create"=>'',
+        "Test_raw_insert"=>'',
+        "Test_raw_getOne"=>'John',
+        "Test_raw_select"=>'John, Peter, Ian, Steve, Robert, Lucas, Jane, Dot',
+        "Test_simple"=>'select  `foo` from `bar`      ',
+        "Test_simple_tostring"=>'select  `foo` from `bar`      ',
+        "Test_simple_dot"=>'select  `x`.`foo`.`bar` from `bar`      ',
+        "Test_multifields"=>'select  `a`, `b`, `c` from `bar`      ',
+        "Test_multitable"=>'select  `foo`.`a`, `foo`.`b`, `foo`.`c`, `bar`.`x`, `bar`.`y` from `bar`,`baz`      ',
+        "Test_selectall"=>'select  * from `bar`      ',
+        "Test_select_opton1"=>'select SQL_CALC_FOUND_ROWS * from `foo`      ',
+        "Test_select_calc_rows"=>'select SQL_CALC_FOUND_ROWS * from `foo`      limit 0, 5',
+        "Test_select_calc_rows2"=>'8',
+        "Test_select_calc_rows3"=>'8',
+        "Test_row"=>'Array
+(
+    [id] => 2
+    [0] => 2
+    [name] => Peter
+    [1] => Peter
+    [a] => 2
+    [2] => 2
+    [b] => 4
+    [3] => 4
+    [c] => 7
+    [4] => 7
+)
+',
+        "Test_getAll"=>'Array
+(
+    [0] => Array
+        (
+            [id] => 1
+            [name] => John
+            [a] => 1
+            [b] => 2
+            [c] => 3
+        )
+
+    [1] => Array
+        (
+            [id] => 2
+            [name] => Peter
+            [a] => 2
+            [b] => 4
+            [c] => 7
+        )
+
+)
+',
+        "Test_ts"=>'select  * from `foo`      ',
+        "Test_expr"=>'call foobar()',
+        "Test_expr2"=>'select  (select 1) as `x1`, (3+3) as `x2`        ',
+        "Test_expr3"=>'acceptance',
+        "Test_expr4"=>'foo',
+        "Test_expr5"=>'foo..bar'
+    );
     function init(){
         $this->db=$this->add('DB');
         parent::init();
     }
+    function runTests(){
+        $this->grid->addColumn('text','Test_para');
+        return parent::runTests();
+    }
     function prepare(){
         return array($this->db->dsql());
+    }
+    function formatResult(&$row,$key,$result){
+        //parent::formatResult($row,$key,$result);
+        $x=parent::formatResult($row,$key,$result);
+        $row[$key.'_para']=print_r($this->input[0]->params,true);
+        return array($x,$this->input[0]->params);
     }
     function test_create($t){
         $this->db->query('drop temporary table if exists foo');
@@ -88,5 +156,11 @@ class page_db extends Page_Tester {
     function test_expr5($t){
         return implode(',',$t->expr('select concat_ws([args])')->args(array('..','foo','bar'))->getHash());
     }
+    function test_update($t){
+        return $t->table('foo')->where('id','1')->set('name','Silvia')->update();
+    }
+    function test_update2($t){
+        $t->where('id','1')->set('name','Silvia')->do_update();
+        return print_r($t->table('foo')->where('id',array(1,2))->getAll(),true);
+    }
 }
-

@@ -6,3 +6,4 @@ config.php
 upload
 distfiles
 .DS_Store
+/nbproject/private/

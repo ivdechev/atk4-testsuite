@@ -2,6 +2,175 @@
 
 class page_dbwhere extends Page_Tester {
     public $db;
+    public $proper_responses=array(
+        "Test_create"=>array (
+  0 => '',
+  1 => 
+  array (
+  ),
+),
+        "Test_insert"=>array (
+  0 => '',
+  1 => 
+  array (
+  ),
+),
+        "Test_where1"=>array (
+  0 => 'select  * from `foo`  where (`id` = :a)    ',
+  1 => 
+  array (
+    ':a' => 2,
+  ),
+),
+        "Test_where2a"=>array (
+  0 => 'select  * from `foo`  where (`a` > :a)    ',
+  1 => 
+  array (
+    ':a' => 1,
+  ),
+),
+        "Test_where2_compat"=>array (
+  0 => 'select  * from `foo`  where (`a` > :a)    ',
+  1 => 
+  array (
+    ':a' => 1,
+  ),
+),
+        "Test_where2b"=>array (
+  0 => 'select  * from `foo`  where (`a` < :a)    ',
+  1 => 
+  array (
+    ':a' => 1,
+  ),
+),
+        "Test_where2c"=>array (
+  0 => 'select  * from `foo`  where (`a` >= :a)    ',
+  1 => 
+  array (
+    ':a' => 1,
+  ),
+),
+        "Test_where2d"=>array (
+  0 => 'select  * from `foo`  where (`a` <= :a)    ',
+  1 => 
+  array (
+    ':a' => 1,
+  ),
+),
+        "Test_where2e"=>array (
+  0 => 'select  * from `foo`  where (`a` != :a)    ',
+  1 => 
+  array (
+    ':a' => 1,
+  ),
+),
+        "Test_where2f"=>array (
+  0 => 'select  * from `foo`  where (`a` <> :a)    ',
+  1 => 
+  array (
+    ':a' => 1,
+  ),
+),
+        "Test_where2g"=>array (
+  0 => 'select  * from `foo`  where (`a` in :a)    ',
+  1 => 
+  array (
+    ':a' => 1,
+  ),
+),
+        "Test_where2h"=>array (
+  0 => 'select  * from `foo`  where (`a` not in :a)    ',
+  1 => 
+  array (
+    ':a' => 1,
+  ),
+),
+        "Test_where2i"=>array (
+  0 => 'select  * from `foo`  where (`a` like :a)    ',
+  1 => 
+  array (
+    ':a' => 1,
+  ),
+),
+        "Test_where2j"=>array (
+  0 => 'select  * from `foo`  where (`a` not like :a)    ',
+  1 => 
+  array (
+    ':a' => 1,
+  ),
+),
+        "Test_where2k"=>array (
+  0 => 'select  * from `foo`  where (`anot` like :a)    ',
+  1 => 
+  array (
+    ':a' => 1,
+  ),
+),
+        "Test_where3_or"=>array (
+  0 => 'select  * from `foo`  where (`a` 1 :a or `b` 2 :a)    ',
+  1 => 
+  array (
+    ':a' => NULL,
+  ),
+),
+        "Test_where4_in"=>array (
+  0 => 'select  * from `foo`  where (`a` in (:a,:a_2))    ',
+  1 => 
+  array (
+    ':a' => 1,
+    ':a_2' => 2,
+  ),
+),
+        "Test_where5_1"=>array (
+  0 => 'select  * from `foo`  where ((length(name)) > :a)    ',
+  1 => 
+  array (
+    ':a' => 2,
+  ),
+),
+        "Test_where5_2"=>array (
+  0 => 'select  * from `foo`  where ((length(name)) in (:a,:a_2))    ',
+  1 => 
+  array (
+    ':a' => 2,
+    ':a_2' => 4,
+  ),
+),
+        "Test_where5_3"=>array (
+  0 => 'select  * from `foo`  where ((select  `name` from `foo`  where (`id` = :a)    ) in (:a_2,:a_3))    ',
+  1 => 
+  array (
+    ':a' => 1,
+    ':a_2' => 2,
+    ':a_3' => 4,
+  ),
+),
+        "Test_where5_4"=>array (
+  0 => 'select  * from `foo`  where (a=b)    ',
+  1 => 
+  array (
+  ),
+),
+        "Test_where6"=>array (
+  0 => 'select  * from `foo`  where (`id` = (select  `name` from `foo`  where (`id` = :a)    ))    ',
+  1 => 
+  array (
+  ),
+),
+        "Test_where7"=>array (
+  0 => 'select  * from `foo`  where (`id` = (select  `name` from `foo`  where (`id` = :a)    ))  having (`id>` 1 :a_2)  ',
+  1 => 
+  array (
+    ':a_2' => NULL,
+  ),
+),
+        "Test_clone_param"=>array (
+  0 => 'select  * from `foo`      ',
+  1 => 
+  array (
+  ),
+)
+    );
     function init(){
         $this->db=$this->add('DB');
         parent::init();
@@ -11,8 +180,10 @@ class page_dbwhere extends Page_Tester {
         return parent::runTests();
     }
     function formatResult(&$row,$key,$result){
-        parent::formatResult($row,$key,$result);
-        $row[$key.'_para']=print_r($this->input[0]->params,true);
+        //parent::formatResult($row,$key,$result);
+        $x=parent::formatResult($row,$key,array($result,$this->input[0]->params));
+        $row[$key.'_res']=print_r($this->input[0]->params,true);
+        return $x;
     }
     function prepare(){
         return array($this->db->dsql()->table('foo'));

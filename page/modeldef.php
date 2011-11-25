@@ -46,6 +46,5 @@ class page_modeldef extends Page_Tester {
         }
         return $m->get('name');
     }
-
 }
 
