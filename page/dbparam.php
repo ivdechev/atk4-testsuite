@@ -2,16 +2,16 @@
 
 class page_dbparam extends Page_Tester {
     public $db;
-    public $proper_responses=array(
+        public $proper_responses=array(
         "Test_param"=>array (
-  0 => 'select  * from `foo`  where (`id` = :a)    ',
+  0 => 'select  * from `foo`  where `id` = :a    ',
   1 => 
   array (
     ':a' => 2,
   ),
 ),
         "Test_param2"=>array (
-  0 => 'select  * from `foo`  where (`id` = :a) and (`a` = :a_2)    ',
+  0 => 'select  * from `foo`  where `id` = :a and `a` = :a_2    ',
   1 => 
   array (
     ':a' => 2,
@@ -19,81 +19,65 @@ class page_dbparam extends Page_Tester {
   ),
 ),
         "Test_param_sqlinjection"=>array (
-  0 => 'select  * from `foo`  where (`id` = :a)    ',
+  0 => 'select  * from `foo`  where `id` = :a    ',
   1 => 
   array (
     ':a' => '\'); show tables; --',
   ),
 ),
         "Test_param_subquery"=>array (
-  0 => 'select  (select  *    where (`id` = :a_2)    ) as `boo` from `foo`  where (`id` = :a)    ',
+  0 => 'select  (select  *    where `id` = :a    ) `boo` from `foo`  where `id` = :a_2    ',
   1 => 
   array (
-    ':a' => '1',
-    ':a_2' => 3,
+    ':a' => 3,
+    ':a_2' => '1',
   ),
 ),
         "Test_param_unlinked"=>array (
-  0 => 'select  (select  *    where (`id` = :b)    ) as `boo` from `foo`  where (`id` = :a)    ',
+  0 => 'select  (select  *    where `id` = :b    ) `boo` from `foo`  where `id` = :a    ',
   1 => 
   array (
-    ':a' => '1',
     ':b' => 3,
+    ':a' => '1',
   ),
 ),
         "Test_param_clash"=>array (
-  0 => 'Clashed. Good',
+  0 => 'select  (select  *    where `id` = :a    ) `boo` from `foo`  where `id` = :a_2    ',
   1 => 
   array (
-    ':a' => '1',
+    ':a' => 3,
+    ':a_2' => '1',
   ),
 ),
         "Test_param_doublewhere"=>array (
-  0 => 'select  * from `foo`  where (`id` = :a_2)    ',
+  0 => 'select  * from `foo`  where `id` = :a    ',
   1 => 
   array (
-    ':a_2' => 3,
+    ':a' => 3,
   ),
 ),
         "Test_param_doublewhere2"=>array (
-  0 => 'select  *    where (`id` = :a_2)    Array
-(
-    [:a_2] => 2
-)
-',
+  0 => 'select  *    where `id` = :a    ',
   1 => 
   array (
-    ':a' => 'must not be there',
   ),
 ),
         "Test_param_doublewhere3"=>array (
-  0 => 'select  * from `foo`  where (`id` = :a) and (`id` = :a_2)    Array
+  0 => 'select  * from `foo`  where `id` = :a and `id` = :a_2    Array
 (
-    [:a] => 3
-    [:a_2] => 5
 )
 ',
   1 => 
   array (
-    ':a' => 3,
   ),
 ),
         "Test_param_doublewhere4"=>array (
-  0 => 'select  * from `foo`  where (`id` = :a)    ',
+  0 => 'select  * from `foo`  where `id` = :a    ',
   1 => 
   array (
     ':a' => 3,
-    ':a_2' => 4,
   ),
 ),
-        "Test_param_doublewhere5"=>array (
-  0 => 'update `foo` set id=:a_2 where (`id` = :a)',
-  1 => 
-  array (
-    ':a' => 3,
-    ':a_2' => 4,
-  ),
-)
     );
 
     function init(){
@@ -108,9 +92,8 @@ class page_dbparam extends Page_Tester {
     }
     function formatResult(&$row,$key,$result){
         //parent::formatResult($row,$key,$result);
-        $x=parent::formatResult($row,$key,$result);
-        $row[$key.'_para']=print_r($this->input[0]->params,true);
-        return array($x,$this->input[0]->params);
+        $x=parent::formatResult($row,$key,array($result,$this->input[0]->params));
+        return $x;
     }
     function prepare(){
         return array($this->db->dsql()->table('foo'));
@@ -155,7 +138,7 @@ class page_dbparam extends Page_Tester {
     function test_param_doublewhere2($t){
         $t->where('id','must not be there');
         $t2=$t->dsql()->where('id',2);
-        return $t2.print_r($t2->params,true);
+        return $t2;
     }
     function test_param_doublewhere3($t){
         $t->where('id',3);

@@ -10,8 +10,8 @@ class page_db extends Page_Tester {
         "Test_simple"=>'select  `foo` from `bar`      ',
         "Test_simple_tostring"=>'select  `foo` from `bar`      ',
         "Test_simple_dot"=>'select  `x`.`foo`.`bar` from `bar`      ',
-        "Test_multifields"=>'select  `a`, `b`, `c` from `bar`      ',
-        "Test_multitable"=>'select  `foo`.`a`, `foo`.`b`, `foo`.`c`, `bar`.`x`, `bar`.`y` from `bar`,`baz`      ',
+        "Test_multifields"=>'select  `a`,`b`,`c` from `bar`      ',
+        "Test_multitable"=>'select  `foo`.`a`,`foo`.`b`,`foo`.`c`,`bar`.`x`,`bar`.`y` from `bar`,`baz`      ',
         "Test_selectall"=>'select  * from `bar`      ',
         "Test_select_opton1"=>'select SQL_CALC_FOUND_ROWS * from `foo`      ',
         "Test_select_calc_rows"=>'select SQL_CALC_FOUND_ROWS * from `foo`      limit 0, 5',
@@ -55,7 +55,7 @@ class page_db extends Page_Tester {
 ',
         "Test_ts"=>'select  * from `foo`      ',
         "Test_expr"=>'call foobar()',
-        "Test_expr2"=>'select  (select 1) as `x1`, (3+3) as `x2`        ',
+        "Test_expr2"=>'select  (select 1) `x1`,3+3 `x2`        ',
         "Test_expr3"=>'acceptance',
         "Test_expr4"=>'foo',
         "Test_expr5"=>'foo..bar'
@@ -70,12 +70,6 @@ class page_db extends Page_Tester {
     }
     function prepare(){
         return array($this->db->dsql());
-    }
-    function formatResult(&$row,$key,$result){
-        //parent::formatResult($row,$key,$result);
-        $x=parent::formatResult($row,$key,$result);
-        $row[$key.'_para']=print_r($this->input[0]->params,true);
-        return array($x,$this->input[0]->params);
     }
     function test_create($t){
         $this->db->query('drop temporary table if exists foo');
@@ -144,7 +138,7 @@ class page_db extends Page_Tester {
     }
     function test_expr2($t){
         return $t
-            ->field($t->expr('select 1'),'x1')
+            ->field($t->expr('(select 1)'),'x1')
             ->field($t->expr('3+3'),'x2');
     }
     function test_expr3($t){

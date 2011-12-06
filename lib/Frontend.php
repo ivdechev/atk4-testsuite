@@ -12,6 +12,20 @@ class Link extends HtmlElement {
         return parent::set($descr);
     }
 }
+
+class Model_Examples extends Model_Array {
+    public $dir;
+    function init(){
+        parent::init();
+
+        $this->addField('name');
+
+        $p=$this->api->pathfinder->searchDir('page');
+        $this->setAssoc($p);
+        return $this;
+    }
+
+}
 class Frontend extends ApiFrontend {
 	function init(){
 		parent::init();
@@ -34,9 +48,24 @@ class Frontend extends ApiFrontend {
         $this->dbConnect();
 	}
     function page_index($page){
+        /*
         $page->add('Link')->set('core','AbstractObject');
         $page->add('Link')->set('db','PDO compatible Database Tests');
         $page->add('Link')->set('dbwhere','Where clause testing');
         $page->add('Link')->set('dbparam','Parametric arguments and subqueries');
+
+        $this->add('Grid')->setModel('Examples');
+         */
+        $m=$this->add('Model_Examples');
+        $l=$this->add('CompleteLister');
+        $l->setModel('Examples');
+        $l->addTotals();
+        $l->addHook('formatRow',function($l){
+            $n=$l->current_row['name'];
+            $n=str_replace('.php','',$n);
+            $n='<a href="'.$l->api->url($n).'">'.$n.'</a>';
+
+            $l->current_row['name']=$n;
+        });
     }
 }
